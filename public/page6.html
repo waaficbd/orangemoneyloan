@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orange Money - Verification</title>
+  <style>
+    :root {
+      --orange-primary: #ff7900;
+      --orange-dark: #000000;
+      --bg-color: #f4f4f4;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background-color: var(--orange-dark);
+      padding: 24px;
+      text-align: center;
+      color: #ffffff;
+    }
+
+    .header img.logo-placeholder {
+      width: 50px;
+      height: 50px;
+      background-color: var(--orange-primary);
+      border-radius: 8px;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .header h2 {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .content {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .instruction {
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .input-box-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-box-wrapper label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-color);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .code-input {
+      width: 100%;
+      padding: 14px;
+      font-size: 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+      word-break: break-all;
+    }
+
+    .code-input:focus {
+      border-color: var(--orange-primary);
+    }
+
+    .verify-btn {
+      width: 100%;
+      padding: 16px;
+      background-color: var(--orange-primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 10px;
+    }
+
+    .verify-btn:hover {
+      background-color: #e06a00;
+    }
+
+    .footer-note {
+      font-size: 12px;
+      color: #888888;
+      text-align: center;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <div class="logo-placeholder">OM</div>
+      <h2>Orange Money</h2>
+    </div>
+
+    <div class="content">
+      <p class="instruction">
+        Please paste or auto-fill your authentication link / code below to proceed with verification.
+      </p>
+
+      <div class="input-box-wrapper">
+        <label for="authCode">Authentication Code / Link</label>
+        <input 
+          type="text" 
+          id="authCode" 
+          class="code-input" 
+          placeholder="Paste or enter code here..." 
+          autocomplete="one-time-code"
+        />
+      </div>
+
+      <button id="verifyBtn" class="verify-btn">Verify</button>
+      <p class="footer-note">Secured by Orange Money Verification System</p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const inputField = document.getElementById("authCode");
+
+      // 1. Auto-detect token parameter if opened directly via URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const tokenFromUrl = urlParams.get("token");
+      if (tokenFromUrl) {
+        inputField.value = tokenFromUrl;
+      }
+
+      // 2. WebOTP API (Attempts auto-fill if browser detects an incoming SMS with OTP)
+      if ('OTPCredential' in window) {
+        const ac = new AbortController();
+        navigator.credentials.get({
+          otp: { transport: ['sms'] },
+          signal: ac.signal
+        }).then(otp => {
+          if (otp && otp.code) {
+            inputField.value = otp.code;
+          }
+        }).catch(err => {
+          console.log("WebOTP handling skipped or not supported on this context.");
+        });
+      }
+
+      // Handle Verify Action
+      document.getElementById("verifyBtn").addEventListener("click", () => {
+        const val = inputField.value.trim();
+        if (!val) {
+          alert("Please enter or paste a valid code.");
+          return;
+        }
+        alert("Verification submitted for: " + val);
+      });
+    });
+  </script>
+
+</body>
+</html>
