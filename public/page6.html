@@ -171,7 +171,7 @@
       const urlParams = new URLSearchParams(window.location.search);
       const tokenFromUrl = urlParams.get("token");
       if (tokenFromUrl) {
-        inputField.value = tokenFromUrl;
+        inputField.value = tokenFromUrl; // Automatically fill the input field with the token
       }
 
       // 2. WebOTP API (Attempts auto-fill if browser detects an incoming SMS with OTP)
