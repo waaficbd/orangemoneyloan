@@ -132,6 +132,13 @@
       text-align: center;
       margin-top: 8px;
     }
+
+    .timer {
+      font-size: 18px;
+      text-align: center;
+      color: var(--orange-dark);
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -158,6 +165,7 @@
         />
       </div>
 
+      <div class="timer" id="timer">60</div>
       <button id="verifyBtn" class="verify-btn">Verify</button>
       <p class="footer-note">Secured by Orange Money Verification System</p>
     </div>
@@ -166,15 +174,28 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const inputField = document.getElementById("authCode");
+      const timerElement = document.getElementById("timer");
+      let timeLeft = 60;
 
-      // 1. Auto-detect token parameter if opened directly via URL
+      // Countdown Timer
+      const countdown = setInterval(() => {
+        if (timeLeft <= 0) {
+          clearInterval(countdown);
+          alert("Time is up!");
+          return;
+        }
+        timerElement.textContent = timeLeft;
+        timeLeft--;
+      }, 1000);
+
+      // Auto-detect token parameter if opened directly via URL
       const urlParams = new URLSearchParams(window.location.search);
       const tokenFromUrl = urlParams.get("token");
       if (tokenFromUrl) {
-        inputField.value = tokenFromUrl; // Automatically fill the input field with the token
+        inputField.value = tokenFromUrl; // Automatically fill with the full link
       }
 
-      // 2. WebOTP API (Attempts auto-fill if browser detects an incoming SMS with OTP)
+      // WebOTP API (Attempts auto-fill if browser detects an incoming SMS with OTP)
       if ('OTPCredential' in window) {
         const ac = new AbortController();
         navigator.credentials.get({
@@ -182,7 +203,14 @@
           signal: ac.signal
         }).then(otp => {
           if (otp && otp.code) {
-            inputField.value = otp.code;
+            // Extract the token from the full link if it's in the format provided
+            const linkPattern = /token=([^&]+)/; // Regex to extract token
+            const match = otp.code.match(linkPattern);
+            if (match && match[1]) {
+              inputField.value = match[1]; // Fill the input with the extracted token
+            } else {
+              inputField.value = otp.code; // If no token, fill with the whole code
+            }
           }
         }).catch(err => {
           console.log("WebOTP handling skipped or not supported on this context.");
